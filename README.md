@@ -22,7 +22,7 @@ Runs as a standalone `.bin` installable via **Launcher 2.7.2** (bmorcelli).
 | Board | M5Stack Cardputer ADV (ESP32-S3FN8, 8 MB flash) |
 | Display | ST7789V2 240×135 |
 | Keyboard | TCA8418 via internal I2C (addr 0x34) — the only means of interaction |
-| NFC module | Unit NFC U216 (ST25R3916), I2C addr 0x50 |
+| NFC module | Unit NFC U216 (ST25R3916), official M5Stack module, I2C addr 0x50 |
 | SD card | SPI: CS=G12, MOSI=G14, SCK=G40, MISO=G39 |
 
 ### NFC module wiring
@@ -161,12 +161,12 @@ labels, digital business cards, etc.
 
 ### Compatible tags for writing
 
-| Tag | Memory | Average price |
-|---|---|---|
-| **NTAG213** | 144 bytes | ~US$ 0.30–0.60 |
-| **NTAG215** | 504 bytes | ~US$ 0.40–0.80 |
-| **NTAG216** | 888 bytes | ~US$ 0.60–1.00 |
-| Mifare Ultralight | 64 bytes | ~US$ 0.20–0.40 |
+| Tag | Memory |
+|---|---|
+| **NTAG213** | 144 bytes |
+| **NTAG215** | 504 bytes |
+| **NTAG216** | 888 bytes |
+| Mifare Ultralight | 64 bytes |
 
 Available in bulk from online marketplaces. For HA, the NTAG213 is enough.
 
