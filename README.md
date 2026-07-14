@@ -1,27 +1,33 @@
 # NFC Tool — M5Stack Cardputer ADV
 
-Leitor, emulador e gravador de tags NFC para o **M5Stack Cardputer ADV** com o
-módulo **Unit NFC U216 (ST25R3916)**. Lê cartões NFC-A, salva no SD card,
-emula os cartões salvos e grava registros NDEF em tags em branco (Home Assistant,
-etiquetas, cartões de visita digitais).
+![Platform](https://img.shields.io/badge/platform-ESP32--S3-blue)
+![Framework](https://img.shields.io/badge/framework-Arduino%20%2F%20PlatformIO-orange)
+![Board](https://img.shields.io/badge/board-M5Stack%20Cardputer%20ADV-red)
+![NFC Chip](https://img.shields.io/badge/NFC-ST25R3916-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-Roda como `.bin` standalone instalável pelo **Launcher 2.7.2** (bmorcelli).
+NFC tag reader, emulator, and writer for the **M5Stack Cardputer ADV** with the
+**Unit NFC U216 (ST25R3916)** module. Reads NFC-A cards, saves them to the SD card,
+emulates saved cards, and writes NDEF records to blank tags (Home Assistant,
+labels, digital business cards).
+
+Runs as a standalone `.bin` installable via **Launcher 2.7.2** (bmorcelli).
 
 ---
 
 ## Hardware
 
-| Componente | Detalhe |
+| Component | Detail |
 |---|---|
-| Placa | M5Stack Cardputer ADV (ESP32-S3FN8, 8 MB flash) |
+| Board | M5Stack Cardputer ADV (ESP32-S3FN8, 8 MB flash) |
 | Display | ST7789V2 240×135 |
-| Teclado | TCA8418 via I2C interno (addr 0x34) — única forma de interação |
-| Módulo NFC | Unit NFC U216 (ST25R3916), I2C addr 0x50 |
+| Keyboard | TCA8418 via internal I2C (addr 0x34) — the only means of interaction |
+| NFC module | Unit NFC U216 (ST25R3916), I2C addr 0x50 |
 | SD card | SPI: CS=G12, MOSI=G14, SCK=G40, MISO=G39 |
 
-### Conexão do módulo NFC
+### NFC module wiring
 
-Conecte o Unit NFC U216 na **Port.A (Grove)** do Cardputer:
+Connect the Unit NFC U216 to the Cardputer's **Port.A (Grove)**:
 
 | Unit NFC | Cardputer Port.A |
 |---|---|
@@ -30,21 +36,21 @@ Conecte o Unit NFC U216 na **Port.A (Grove)** do Cardputer:
 | 5V  | 5V |
 | GND | GND |
 
-Sem conflito de endereço I2C: teclado = 0x34, NFC = 0x50.
+No I2C address conflict: keyboard = 0x34, NFC = 0x50.
 
 ---
 
-## Dependências
+## Dependencies
 
-- **PlatformIO** (rodando sob **Python 3.10–3.13** — o 3.14 ainda não é suportado pelo PlatformIO)
-- Plataforma `espressif32 @ ^6.7.0` (ESP-IDF 5.x via Arduino framework)
-- Bibliotecas (resolvidas automaticamente pelo PlatformIO):
+- **PlatformIO** (running under **Python 3.10–3.13** — 3.14 isn't supported by PlatformIO yet)
+- Platform `espressif32 @ ^6.7.0` (ESP-IDF 5.x via Arduino framework)
+- Libraries (resolved automatically by PlatformIO):
   - `m5stack/M5Cardputer`
   - `m5stack/M5Unit-NFC`
 
-O board `m5stack-cardputer` é definido localmente em
+The `m5stack-cardputer` board is defined locally in
 [boards/m5stack-cardputer.json](boards/m5stack-cardputer.json) (variant
-`m5stack_stamp_s3`, mesmo ESP32-S3FN8).
+`m5stack_stamp_s3`, same ESP32-S3FN8).
 
 ---
 
@@ -54,11 +60,11 @@ O board `m5stack-cardputer` é definido localmente em
 pio run
 ```
 
-> ⚠️ Se o `pio` do sistema estiver sob Python 3.14, instale o PlatformIO num
-> Python 3.13 e use o caminho explícito, ex:
+> ⚠️ If your system's `pio` is running under Python 3.14, install PlatformIO on
+> Python 3.13 and use the explicit path, e.g.:
 > `C:\Python313-x64\Scripts\pio.exe run`
 
-O binário é gerado em:
+The binary is generated at:
 
 ```
 .pio/build/m5stack-cardputer/firmware.bin
@@ -66,53 +72,53 @@ O binário é gerado em:
 
 ---
 
-## Instalação via Launcher 2.7.2
+## Installation via Launcher 2.7.2
 
-1. Copie `firmware.bin` para o SD card (ex.: `/downloads/nfc-tool.bin`)
-2. Insira o SD no Cardputer
-3. No Launcher, navegue até o arquivo e selecione **instalar/rodar**
-4. Ao **resetar**, o Cardputer volta sozinho ao Launcher
+1. Copy `firmware.bin` to the SD card (e.g. `/downloads/nfc-tool.bin`)
+2. Insert the SD card into the Cardputer
+3. In the Launcher, navigate to the file and select **install/run**
+4. On **reset**, the Cardputer returns to the Launcher on its own
 
-A versão do build (data/hora) aparece no topo da tela para você confirmar que
-instalou o binário correto.
-
----
-
-## Uso
-
-### Telas e navegação
-
-| Tela | Ação |
-|---|---|
-| **Scan** | Aproxime um cartão → mostra UID, tipo, ATQA/SAK |
-| | `S` = salvar &nbsp;·&nbsp; `B` = ver cartões salvos &nbsp;·&nbsp; `W` = gravar tag HA |
-| **Nome** | Digite um nome &nbsp;·&nbsp; `Enter` = salvar &nbsp;·&nbsp; `Del` = apagar char / voltar |
-| **Salvos** | `Fn+;` / `Fn+.` = navegar &nbsp;·&nbsp; `Enter` = abrir &nbsp;·&nbsp; `Del` = voltar |
-| **Detalhe** | `E` = emular &nbsp;·&nbsp; `D` = apagar &nbsp;·&nbsp; `Del` = voltar |
-| **Emular** | `Del` = parar e voltar |
-| **Apagar?** | `Enter` = confirma &nbsp;·&nbsp; `Del` = cancela |
-| **URL (NDEF)** | Digite URL &nbsp;·&nbsp; `Enter` = gravar na tag &nbsp;·&nbsp; `Del` = apagar char / voltar |
-| **Gravando** | Aproxime tag em branco → grava automático &nbsp;·&nbsp; `Del` = cancelar |
-
-### Teclas de navegação
-
-| Tecla | Função |
-|---|---|
-| `Fn` + `;` | Cima |
-| `Fn` + `.` | Baixo |
-| `Fn` + `,` | Esquerda |
-| `Fn` + `/` | Direita |
-| `Enter` | Confirmar |
-| `Del` (`⌫`, canto sup. direito) | Voltar / Cancelar / apagar caractere |
-
-> O botão físico **G0** não é usado para ações (fica atrás e é difícil de
-> pressionar). Tudo é feito pelo teclado.
+The build version (date/time) is shown at the top of the screen so you can
+confirm you installed the right binary.
 
 ---
 
-## Formato dos arquivos `.nfc`
+## Usage
 
-Salvos em `/nfc_cards/<nome>.nfc` no SD card (texto simples):
+### Screens and navigation
+
+| Screen | Action |
+|---|---|
+| **Scan** | Bring a card close → shows UID, type, ATQA/SAK |
+| | `S` = save &nbsp;·&nbsp; `B` = view saved cards &nbsp;·&nbsp; `W` = write HA tag |
+| **Name** | Type a name &nbsp;·&nbsp; `Enter` = save &nbsp;·&nbsp; `Del` = delete char / back |
+| **Saved** | `Fn+;` / `Fn+.` = navigate &nbsp;·&nbsp; `Enter` = open &nbsp;·&nbsp; `Del` = back |
+| **Detail** | `E` = emulate &nbsp;·&nbsp; `D` = delete &nbsp;·&nbsp; `Del` = back |
+| **Emulate** | `Del` = stop and go back |
+| **Delete?** | `Enter` = confirm &nbsp;·&nbsp; `Del` = cancel |
+| **URL (NDEF)** | Type URL &nbsp;·&nbsp; `Enter` = write to tag &nbsp;·&nbsp; `Del` = delete char / back |
+| **Writing** | Bring a blank tag close → writes automatically &nbsp;·&nbsp; `Del` = cancel |
+
+### Navigation keys
+
+| Key | Function |
+|---|---|
+| `Fn` + `;` | Up |
+| `Fn` + `.` | Down |
+| `Fn` + `,` | Left |
+| `Fn` + `/` | Right |
+| `Enter` | Confirm |
+| `Del` (`⌫`, top-right corner) | Back / Cancel / delete character |
+
+> The physical **G0** button is not used for actions (it's on the back and
+> hard to press). Everything is done via the keyboard.
+
+---
+
+## `.nfc` file format
+
+Saved to `/nfc_cards/<name>.nfc` on the SD card (plain text):
 
 ```
 Filetype: NFC Cardputer
@@ -128,90 +134,91 @@ Type id: 2
 
 ---
 
-## Tipos de cartão suportados
+## Supported card types
 
-| Tipo | Leitura | Emulação | Gravação NDEF |
+| Type | Read | Emulate | NDEF write |
 |---|---|---|---|
-| Mifare Classic 1K/4K (Bilhete Único, acesso predial) | ✅ UID/ATQA/SAK | ❌ | ❌ |
-| Mifare Ultralight / NTAG2xx (crachás, tickets, tags em branco) | ✅ | ✅ | ✅ |
-| NFC-A genérico (ISO 14443-A) | ✅ | — | — |
-| 125 kHz RFID (EM4100, chaveirinhos de porta) | ❌ freq. errada | ❌ | ❌ |
+| Mifare Classic 1K/4K (transit cards, building access) | ✅ UID/ATQA/SAK | ❌ | ❌ |
+| Mifare Ultralight / NTAG2xx (badges, tickets, blank tags) | ✅ | ✅ | ✅ |
+| Generic NFC-A (ISO 14443-A) | ✅ | — | — |
+| 125 kHz RFID (EM4100, door key fobs) | ❌ wrong frequency | ❌ | ❌ |
 
-## Gravar tags NDEF (Home Assistant e outros)
+## Writing NDEF tags (Home Assistant and others)
 
-A função **Gravar tag HA** (`W` na tela Scan) permite programar tags NFC em branco com um
-registro NDEF URI — ideal para automações do **Home Assistant**, etiquetas de produto,
-cartões de visita digitais, etc.
+The **Write HA tag** function (`W` on the Scan screen) lets you program blank NFC
+tags with an NDEF URI record — ideal for **Home Assistant** automations, product
+labels, digital business cards, etc.
 
-### Fluxo para Home Assistant
+### Home Assistant flow
 
-1. No app HA: crie uma automação NFC → HA exibe um UUID (ex: `550e8400-e29b-41d4-a716-446655440000`)
-2. No Cardputer: pressione `W` na tela Scan
-3. A URL já vem pré-preenchida: `https://www.home-assistant.io/tag/`
-4. Digite o UUID fornecido pelo HA (alnum + traços)
-5. Pressione `Enter` → Cardputer entra em modo de gravação
-6. Aproxime uma tag em branco — a gravação acontece automaticamente
-7. Toque a tag com o celular → HA dispara a automação
+1. In the HA app: create an NFC automation → HA displays a UUID (e.g. `550e8400-e29b-41d4-a716-446655440000`)
+2. On the Cardputer: press `W` on the Scan screen
+3. The URL is pre-filled: `https://www.home-assistant.io/tag/`
+4. Type the UUID provided by HA (alnum + dashes)
+5. Press `Enter` → the Cardputer enters write mode
+6. Bring a blank tag close — writing happens automatically
+7. Tap the tag with your phone → HA triggers the automation
 
-### Tags compatíveis para gravação
+### Compatible tags for writing
 
-| Tag | Memória | Preço médio |
+| Tag | Memory | Average price |
 |---|---|---|
-| **NTAG213** | 144 bytes | ~R$ 1–3 |
-| **NTAG215** | 504 bytes | ~R$ 2–4 |
-| **NTAG216** | 888 bytes | ~R$ 3–5 |
-| Mifare Ultralight | 64 bytes | ~R$ 1–2 |
+| **NTAG213** | 144 bytes | ~US$ 0.30–0.60 |
+| **NTAG215** | 504 bytes | ~US$ 0.40–0.80 |
+| **NTAG216** | 888 bytes | ~US$ 0.60–1.00 |
+| Mifare Ultralight | 64 bytes | ~US$ 0.20–0.40 |
 
-Disponíveis no Mercado Livre em lotes. Para HA, o NTAG213 é suficiente.
+Available in bulk from online marketplaces. For HA, the NTAG213 is enough.
 
-> A URL pode ser qualquer texto — basta apagar o pré-preenchimento com `Del` e digitar a nova.
-> Caracteres permitidos: letras, números, `-_./:?=&@+#%~`
-
----
-
-### Limitações conhecidas
-
-- **Emulação só funciona para Mifare Ultralight e NTAG2xx.** É uma limitação do
-  ST25R3916 na biblioteca M5Unit-NFC: a função de emulação rejeita qualquer
-  outro tipo. Portanto:
-  - ❌ **Mifare Classic 1K/4K NÃO podem ser emulados** — isso inclui o
-    **Bilhete Único** e a maioria dos cartões de **acesso predial**.
-  - ✅ Ultralight / NTAG (crachás, tickets) podem ser emulados (UID + memória).
-- **Leitura** funciona para todos os NFC-A (incluindo Classic): você consegue
-  ler e salvar o UID/ATQA/SAK do Bilhete Único, só não consegue emulá-lo.
-- A emulação replica **UID + tipo (ATQA/SAK)** + memória embarcada do UID. Não há
-  dump completo de setores/páginas com conteúdo.
-- Apenas **NFC-A** é suportado (NFC-B/F não implementados nesta versão).
-- Mifare Plus SL3 tem problemas na versão I2C do módulo — evite.
+> The URL can be any text — just clear the pre-filled value with `Del` and type
+> the new one. Allowed characters: letters, numbers, `-_./:?=&@+#%~`
 
 ---
 
-## Estrutura do projeto
+### Known limitations
+
+- **Emulation only works for Mifare Ultralight and NTAG2xx.** This is a
+  limitation of the ST25R3916 in the M5Unit-NFC library: the emulation
+  function rejects any other type. Therefore:
+  - ❌ **Mifare Classic 1K/4K CANNOT be emulated** — this includes most
+    **transit cards** and **building access** cards.
+  - ✅ Ultralight / NTAG (badges, tickets) can be emulated (UID + memory).
+- **Reading** works for all NFC-A cards (including Classic): you can read and
+  save the UID/ATQA/SAK of a transit card, you just can't emulate it.
+- Emulation replicates **UID + type (ATQA/SAK)** + the UID's onboard memory.
+  There's no full sector/page content dump.
+- Only **NFC-A** is supported (NFC-B/F not implemented in this version).
+- Mifare Plus SL3 has issues with the module's I2C version — avoid it.
+
+---
+
+## Project structure
 
 ```
 ├── platformio.ini
 ├── boards/
-│   └── m5stack-cardputer.json   # board custom (ESP32-S3FN8)
+│   └── m5stack-cardputer.json   # custom board (ESP32-S3FN8)
 ├── src/
-│   ├── main.cpp                 # máquina de estados + UI
-│   ├── keyboard.h / .cpp        # leitura do teclado TCA8418
-│   ├── nfc_reader.h / .cpp      # leitura e emulação NFC-A (ST25R3916)
-│   └── card_store.h / .cpp      # save/load .nfc no SD
+│   ├── main.cpp                 # state machine + UI
+│   ├── keyboard.h / .cpp        # TCA8418 keyboard reading
+│   ├── nfc_reader.h / .cpp      # NFC-A reading and emulation (ST25R3916)
+│   └── card_store.h / .cpp      # .nfc save/load on SD
 └── README.md
 ```
 
 ---
 
-## Notas técnicas
+## Technical notes
 
-- **Detecção contínua:** após `detect()` o cartão entra em HALT; o loop usa
-  `wakeup()` (WUPA) + `select()` com o PICC cacheado para manter o cartão
-  visível enquanto encostado, em vez de repetir `detect()` (que usa REQA e não
-  acorda cartões em HALT).
-- **Modo emulação:** exige reconfigurar o unit (`cfg.emulation = true`) e chamar
-  `unit.begin()` de novo; ao sair, reconfigura de volta para modo leitor.
-- **Gravação NDEF:** fluxo `detect → identify → reactivate → ndefWrite → deactivate`.
-  Para Mifare Ultralight puro (não NTAG), chama-se `mifareUltralightChangeFormatToNDEF()`
-  antes de escrever. NTAG213/215/216 já vêm pré-formatados de fábrica.
-  O prefixo de protocolo (`https://`, `http://`, etc.) é armazenado como código
-  compacto no registro NDEF URI (RFC 5.2), não como texto literal.
+- **Continuous detection:** after `detect()` the card enters HALT; the loop
+  uses `wakeup()` (WUPA) + `select()` with the cached PICC to keep the card
+  visible while held in place, instead of repeating `detect()` (which uses
+  REQA and doesn't wake cards in HALT).
+- **Emulation mode:** requires reconfiguring the unit (`cfg.emulation = true`)
+  and calling `unit.begin()` again; on exit, it reconfigures back to reader
+  mode.
+- **NDEF writing:** flow is `detect → identify → reactivate → ndefWrite → deactivate`.
+  For plain Mifare Ultralight (not NTAG), `mifareUltralightChangeFormatToNDEF()`
+  is called before writing. NTAG213/215/216 come pre-formatted from the
+  factory. The protocol prefix (`https://`, `http://`, etc.) is stored as a
+  compact code in the NDEF URI record (RFC 5.2), not as literal text.
